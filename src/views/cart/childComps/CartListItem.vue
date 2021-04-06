@@ -7,12 +7,12 @@
       ></CheckButton>
     </div>
     <div class="item-img">
-      <img :src="itemInfo.product_img" alt="商品图片" />
+      <img :src="itemInfo.product_img" alt="" />
     </div>
     <div class="item-info">
       <div class="item-title">{{ itemInfo.product_name }}</div>
       <div class="item-desc">
-        <button @click="decrement">-</button>
+        <button @click="decrement" :disabled="goodsNumber<=1">-</button>
         <input type="text" v-model.lazy="goodsNumber" />
         <button @click="increment">+</button>
       </div>
@@ -44,10 +44,6 @@ export default {
   methods: {
     checkedChange: function () {
       this.itemInfo.checked = !this.itemInfo.checked;
-      this.$store.commit({
-        type:'updateCart',
-        getmodel:this.itemInfo
-      })
     },
     increment() {
       this.goodsNumber++;

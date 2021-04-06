@@ -40,11 +40,12 @@ export default {
   created() {
     //corpid
     const corpid = this.$route.query.corpid;
-    //this.$store.commit('updateCorpid',{corpid:corpid})
-    this.$store.commit({
-      type: "updateCorpid",
-      corpid: corpid,
-    });
+
+    sessionStorage.removeItem("corpid");
+    localStorage.removeItem("corpid");
+
+    localStorage.setItem("corpid", corpid);
+    sessionStorage.setItem("corpid", corpid);
 
     this.getuserinfo();
   },

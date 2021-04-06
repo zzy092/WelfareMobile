@@ -15,7 +15,9 @@ const getters = {
     // console.log('被调用');
     let sumNumber=0;
     for (const key in state.cartList) {
-      sumNumber+=state.cartList[key].product_num
+      if(state.cartList[key].checked){
+        sumNumber+=state.cartList[key].product_num
+      }
     }
     return sumNumber;
   },

@@ -24,11 +24,8 @@ export default {
   },
   computed: {
     totalPrice() {
-      const cartList = this.$store.getters.cartList;
-      return cartList
-        .filter((item) => {
-          return item.checked;
-        })
+      const checkItems = this.getCheckItems();
+      return checkItems
         .reduce((preValue, item) => {
           return preValue + item.product_num * item.product_ptprice;
         }, 0)
@@ -65,17 +62,27 @@ export default {
     submitOrder: function () {
       //span 阻止时间冒泡
       event.stopPropagation();
-      let isCheck=this.$store.getters.cartList.find(item=>item.checked);
+      let isCheck = this.$store.getters.cartList.find((item) => item.checked);
       if (isCheck) {
+        let checkItems = this.getCheckItems();
+        sessionStorage.removeItem("confirmItems");
+        sessionStorage.setItem("confirmItems", JSON.stringify(checkItems));
+        // sessionStorage.setItem()
         this.$router.push({
-          path: "/jdconfirmorder",
+          path: "/confirmOrderJd",
           query: {
             submitType: 1,
           },
         });
       } else {
-        console.log('请勾选商品');
+        console.log("请勾选商品");
       }
+    },
+    getCheckItems() {
+      const cartList = this.$store.getters.cartList;
+      return cartList.filter((item) => {
+        return item.checked;
+      });
     },
   },
 };

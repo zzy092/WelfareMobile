@@ -5,10 +5,11 @@ const Login = () => import("../views/login/Login");
 const Home = () => import("../views/home/Home");
 const Category = () => import("../views/category/Category");
 const Cart = () => import("../views/cart/Cart");
-const JdOrders = () => import("../views/jdOrders/JdOrders");
+const ShowOrdersJd = () => import("../views/orderJD/showOrders/ShowOrdersJd");
 const SkuDetail = () => import("../views/skuDetail/SkuDetail");
 const HomePage = () => import("../views/homePage/HomePage");
-const JdConfirmOrder = () => import("../views/jdConfirmOrder/JdConfirmOrder");
+const ConfirmOrderJd = () => import("../views/orderJD/confirmOrder/ConfirmOrderJd");
+const PayOrderJd = () => import("../views/orderJD/payOrder/PayOrderJd");
 
 //1、安装插件
 Vue.use(VueRouter);
@@ -39,16 +40,20 @@ const routes = [
     component: Cart
   },
   {
-    path: "/jdOrders",
-    component: JdOrders
+    path: "/ShowOrdersJD",
+    component: ShowOrdersJd
   },
   {
     path: "/skudetail",
     component: SkuDetail
   },
   {
-    path: "/jdconfirmorder",
-    component: JdConfirmOrder
+    path: "/confirmOrderJD",
+    component: ConfirmOrderJd
+  },
+  {
+    path:"/PayOrderJd",
+    component:PayOrderJd
   }
 ];
 
@@ -58,4 +63,11 @@ const router = new VueRouter({
   mode: "history"
 });
 
+router.beforeEach((to,from,next)=>{
+  if(to.path==='/login') return next()
+  if(to.path==='/homepage') return next()
+  const tokenStr=window.sessionStorage.getItem('token')
+  if(!tokenStr) return next('/login')
+  next()
+})
 export default router;

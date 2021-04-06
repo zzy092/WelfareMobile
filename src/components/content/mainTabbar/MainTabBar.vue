@@ -16,7 +16,7 @@
       <div slot="item-text">购物车</div>
     </tab-bar-item>
 
-    <tab-bar-item path="/JdOrders">
+    <tab-bar-item path="/ShowOrdersJD">
       <img slot="item-icon" src="~assets/img/myDownloadIcon/order.svg" alt="">
       <img slot="item-icon-active" src="~assets/img/myDownloadIcon/order_red.svg" alt="">
       <div slot="item-text">订单</div>

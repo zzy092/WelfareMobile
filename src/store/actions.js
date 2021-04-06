@@ -1,4 +1,6 @@
 import { addSkuCart, updateCartNumber, deleteSkuCart } from "network/jdCart.js";
+import { submitOrder } from "network/jdOrder";
+import { getNowCart } from "network/jdCart";
 
 const actions = {
   deleteCart(context, payload) {
@@ -11,9 +13,9 @@ const actions = {
         deleteSkuCart(oldInfo).then(res => {
           if (res.success) {
             context.commit({
-              type:'deleteCart',
-              getmodel:payload.skuModel
-            })
+              type: "deleteCart",
+              getmodel: payload.skuModel
+            });
             return resolve("已删除");
           } else {
             return resolve("删除失败");
@@ -61,7 +63,73 @@ const actions = {
         });
       }
     });
+  },
+  //提交订单
+  submitOrder(context, payload) {
+    return new Promise(resolve => {
+      submitOrder(payload.queryModel).then(res => {
+        if (res.success) {
+          let deleteSkus = payload.queryModel.skus;
+
+          //删除刚刚在购物车里 购买成功的商品
+          for (let index = 0; index < deleteSkus.length; index++) {
+            const element = deleteSkus[index];
+            let obj = {};
+            obj.skuid = element.skuId;
+            context.commit({
+              type: "deleteCart",
+              getmodel: element
+            });
+          }
+
+          console.log(res);
+          return resolve(res.result.order_sn);
+        } else {
+          return resolve("");
+        }
+      });
+    });
+  },
+  //同步cart
+  syscCart(context) {
+    return new Promise(resolve => {
+      getNowCart().then(res => {
+        let dbCartList = res.result;
+        if (res.success) {
+          //删除所有
+          context.commit({
+            type: "deleteAllCart"
+          });
+          //重写添加
+          for (let index = 0; index < dbCartList.length; index++) {
+            var element = dbCartList[index];
+            let obj = {};
+            obj.skuid = element.skuid;
+            obj.product_num = element.number;
+            obj.product_name = element.productName;
+            obj.product_img = element.img;
+            obj.product_jdprice = element.productJdPrice;
+            obj.product_ptprice = element.productPtPrice;
+            obj.product_price = element.productPrice;
+            obj.sale_value = element.sale;
+            obj.stockMsg = element.stockStateDesc;
+            obj.checked = true;
+
+            context.commit({
+              type:"addCart",
+              info:obj
+            })
+          }
+          return resolve("同步购物车成功");
+        } else {
+          return resolve("同步购物车失败");
+        }
+      });
+    });
   }
 };
+
+
+
 
 export default actions;

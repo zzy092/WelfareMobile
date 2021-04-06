@@ -32,7 +32,7 @@ import BackTop from "components/content/backTop/BackTop";
 //js
 import { getHomeMultidata, getHomeProducts } from "network/home";
 import { debunce } from "common/utils";
-import { getNowCart } from "network/jdCart";
+
 
 export default {
   name: "Home",
@@ -101,42 +101,9 @@ export default {
       this.getProducts();
     },
     getcart() {
-      getNowCart().then((res) => {
-        let dbCartList = res.result;
+      this.$store.dispatch("syscCart").then(res=>{
         console.log(res);
-        if (res != undefined && res.success == true) {
-          //遍历数据，更新 vuex 购物车数据
-          let vuexCartList = this.$store.getters.cartList;
-          if (Object.keys(vuexCartList).length!==0) {
-            for (let index = 0; index < dbCartList.length; index++) {
-              var element = dbCartList[index];
-              var ismodel = vuexCartList.find(
-                (item) => item.skuid === element.skuid
-              );
-              if (ismodel) {
-                //更新数量，库存，价格
-                this.$store.commit({
-                  type: "updateCart",
-                  getmodel: this._getCartModel(),
-                });
-              } else {
-                //添加大 vuex
-                this._addCart(element);
-              }
-            }
-          } else {
-            if (
-              dbCartList != undefined &&
-              Object.keys(dbCartList).length !== 0
-            ) {
-              for (let index = 0; index < dbCartList.length; index++) {
-                let element = dbCartList[index];
-                this._addCart(element);
-              }
-            }
-          }
-        }
-      });
+      })
     },
     _addCart(element) {
       let obj = this._getCartModel(element);

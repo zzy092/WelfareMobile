@@ -1,10 +1,10 @@
 <template>
   <div id="cart">
-    <nav-bar class="nav-bar"
-      ><div slot="center">购物车({{ cartCount }})</div></nav-bar
-    >
+    <nav-bar class="nav-bar">
+      <div slot="center">购物车({{ getSumNumber }})</div>
+    </nav-bar>
     <cart-list class="cart-list" :cart-list="cartList" />
-    <bottom-bar ></bottom-bar>
+    <bottom-bar></bottom-bar>
     <main-tab-bar />
   </div>
 </template>
@@ -26,10 +26,10 @@ export default {
     cartList() {
       return this.$store.getters.cartList;
     },
-    cartCount() {
+    getSumNumber() {
       return this.$store.getters.cartCount;
     },
-  }
+  },
 };
 </script>
 

@@ -10,7 +10,7 @@
     </div>
     <div>
       <strong></strong>
-      <span>总计：￥{{ (orderPrice + freightPrice) | numFilter }}</span>
+      <span>总计：￥{{ getPayMoney }}</span>
     </div>
   </div>
 </template>
@@ -28,10 +28,10 @@ export default {
       default: 0,
     },
   },
-  methods: {
-    submit() {
-      console.log("123456");
-    },
+  computed:{
+    getPayMoney(){
+      return Number(this.orderPrice) + Number(this.freightPrice)
+    }
   },
   filters: {
     numFilter(value) {

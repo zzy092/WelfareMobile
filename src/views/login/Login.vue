@@ -53,7 +53,7 @@ export default {
   methods: {
     login() {
       let md5Pwd = md5(this.loginPassword);
-      let corpid = this.$store.getters.corpidValue; //this.$store.corpid;
+      let corpid = localStorage.getItem("corpid"); //this.$store.corpid;
       const obj = {};
       obj.loginName = this.loginName;
       obj.password = md5Pwd;

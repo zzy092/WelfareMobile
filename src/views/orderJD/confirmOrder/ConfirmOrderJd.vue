@@ -5,7 +5,7 @@
     <def-address-wap :defAddress="defAddress" />
     <order-info-wrap :orderInfo="orderInfo" />
     <check-out :orderPrice="orderPrice" :freightPrice="freight" />
-    <div v-if="isdefAddress&&isFreight">
+    <div v-if="isdefAddress && isFreight">
       <button @click="confirmOrder">在线支付</button>
     </div>
   </div>
@@ -22,7 +22,7 @@ import OrderNavBar from "./childComps/OrderNavBar.vue";
 import CheckOut from "./childComps/CheckOut";
 
 import { getMastAddress } from "network/address";
-import { getOrderFreight, submitOrder } from "network/jdOrder";
+import { getOrderFreight } from "network/jdOrder";
 export default {
   components: {
     OrderNavBar,
@@ -49,17 +49,18 @@ export default {
     };
   },
   methods: {
-    _setOrderInfo() { //商品详情
+    _setOrderInfo() {
+      //商品详情
       const suumitType = this.$route.query.submitType;
       //==1 购物车提交
       if (suumitType == "1") {
-        const cartList = this.$store.getters.cartList;
-        this.orderInfo = cartList.filter((item) => {
-          return item.checked;
-        });
+        this.orderInfo = JSON.parse(
+          sessionStorage.getItem("confirmItems") || "{}"
+        );
       }
     },
-    _getMastAddress() { //默认收货地址
+    _getMastAddress() {
+      //默认收货地址
       getMastAddress().then((res) => {
         if (res.success) {
           this.isdefAddress = true;
@@ -73,7 +74,8 @@ export default {
         }
       });
     },
-    _getOrderFreight() {  //订单运费
+    _getOrderFreight() {
+      //订单运费
       let queryModel = new Object();
       queryModel.defAddress = this.$store.getters.getDefAddress;
       queryModel.skuUums = this.getSku();
@@ -85,21 +87,29 @@ export default {
         }
       });
     },
-    confirmOrder() {  //提交订单
-      let queryModel=new Object();
-      queryModel.addressId=this.addressId;
-      queryModel.skus=this.getSku();
-      queryModel.payMoney=this.orderPrice+this.freight;
-      submitOrder(queryModel).then(res=>{
-        if(res.success){
-          console.log(res);
-          console.log('提交订单成功');
-          //携带订单id 跳转 支付页面
+    confirmOrder() {
+      //提交订单
+      let queryModel = new Object();
+      queryModel.addressId = this.addressId;
+      queryModel.skus = this.getSku();
 
-        }else{
-          console.log(res.resultMessage);
-        }
-      })
+      this.$store
+        .dispatch("submitOrder", {
+          queryModel: queryModel,
+        })
+        .then((res) => {
+          console.log(res);
+          if (res !== "") {
+            this.$router.push({
+              path: "/PayOrderJd",
+              query: {
+                order_sn: res,
+              },
+            });
+          } else {
+            console.log("提交失败");
+          }
+        });
     },
     getSku() {
       let listSkuModel = [];

@@ -9,8 +9,8 @@ Vue.use(Vuex);
 
 const state = {
   cartList: JSON.parse(sessionStorage.getItem("cartList") || "[]"),
-  token: localStorage.getItem("token") || "",
-  corpid: localStorage.getItem("corpid") || "",
+  token: sessionStorage.getItem("token") || "",
+  // corpid: localStorage.getItem("corpid") || "",
   category: JSON.parse(sessionStorage.getItem("category") || "[]"),
   defAddress:sessionStorage.getItem("defAddress")||''
 };
